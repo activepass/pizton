@@ -24,18 +24,21 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.*;
 public class Pizton implements ClientModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("Pizton");
 	private static final HashMap<String, PiztonModule> modules = new HashMap<>();
-	private static Config config;
 
 	@Override
 	public void onInitializeClient() {
 		registerCommand();
-		//todo: this is only relevant on first load, don't need to keep it around after
-		config = Config.load();
 
 		ClientLifecycleEvents.CLIENT_STOPPING.register(client -> saveConfig());
 
         Pizton.registerModule(new ThunderYeller());
 		Pizton.registerModule(new MouseToggleCompat());
+
+		Config config = Config.load();
+		for (String m : config.enabled_modules()) {
+			if (!modules.containsKey(m)) continue;
+			modules.get(m).enable();
+		}
 	}
 
 	public static void saveConfig() {
@@ -44,7 +47,8 @@ public class Pizton implements ClientModInitializer {
 				.entrySet()
 				.stream()
 				.filter(e -> e.getValue().enabled())
-				.collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().enabled()))
+				.map(Map.Entry::getKey)
+				.collect(Collectors.toList())
 		).save();
 	}
 
@@ -52,9 +56,6 @@ public class Pizton implements ClientModInitializer {
 		LOGGER.info("Registered module: {}", module.getClass().getName());
 		modules.put(module.getClass().getSimpleName(), module);
 		module.register();
-		if (config.module_states().getOrDefault(module.getClass().getSimpleName(), false)) {
-			module.enable();
-		}
 	}
 
 	public static Logger loggerFor(Class<?> clazz) {

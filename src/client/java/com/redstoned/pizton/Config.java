@@ -10,10 +10,10 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
-public record Config(Map<String, Boolean> module_states) {
+public record Config(List<String> enabled_modules) {
     public static final File config_file = FabricLoader.getInstance().getConfigDir().resolve("pizton.json").toFile();
 
     public static Config load() {
@@ -23,7 +23,7 @@ public record Config(Map<String, Boolean> module_states) {
             return result.resultOrPartial(Pizton.LOGGER::error).orElseThrow();
         } catch (Exception e) {
             e.printStackTrace();
-            return new Config(new HashMap<>());
+            return new Config(new ArrayList<>());
         }
     }
 
@@ -41,6 +41,6 @@ public record Config(Map<String, Boolean> module_states) {
     }
 
     public static final Codec<Config> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-        Codec.unboundedMap(Codec.STRING, Codec.BOOL).fieldOf("module_states").forGetter(Config::module_states)
+        Codec.STRING.listOf().fieldOf("enabled_modules").forGetter(Config::enabled_modules)
     ).apply(instance, Config::new));
 }

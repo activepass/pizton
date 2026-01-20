@@ -17,7 +17,7 @@ public class ThunderYeller extends PiztonModule {
 
     @Override
     public String description() {
-        return "Make loud noise when there's thunder";
+        return "Make it known when there's thunder";
     }
 
     @Override
