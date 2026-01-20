@@ -1,0 +1,36 @@
+{
+	"schemaVersion": 1,
+	"id": "pizton",
+	"version": "${version}",
+	"name": "pizton",
+	"description": "various small stuff",
+	"authors": [
+		"Galiano"
+	],
+	"contact": {
+		"homepage": "https://galiano.dev",
+		"sources": "https://github.com/activepass/pizton",
+		"issues": "https://github.com/activepass/pizton/issues"
+	},
+	"license": "MIT",
+	"icon": "assets/pizton/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"main": [],
+		"client": [
+          "com.redstoned.pizton.Pizton"
+		]
+	},
+	"mixins": [
+		{
+			"config": "pizton.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.18.2",
+		"minecraft": "~1.21.11",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}
