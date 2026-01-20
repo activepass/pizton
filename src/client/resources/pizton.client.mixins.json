@@ -3,7 +3,8 @@
 	"package": "com.redstoned.pizton.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"client": [
-		"SwizzleToggleKeyTypeMixin"
+		"SwizzleToggleKeyTypeMixin",
+		"TraderCopyGuiMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

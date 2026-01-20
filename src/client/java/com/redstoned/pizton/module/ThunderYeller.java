@@ -1,7 +1,6 @@
 package com.redstoned.pizton.module;
 
 import com.redstoned.pizton.Pizton;
-import com.redstoned.pizton.IPiztonModule;
 import com.redstoned.pizton.PiztonModule;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundSource;
@@ -21,7 +20,7 @@ public class ThunderYeller extends PiztonModule {
     }
 
     @Override
-    public void register() {
+    public void init() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (!this.ENABLED) return;
 

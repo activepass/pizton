@@ -4,17 +4,16 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.redstoned.pizton.module.MouseToggleCompat;
 import com.redstoned.pizton.module.ThunderYeller;
+import com.redstoned.pizton.module.TradeCopier;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.network.chat.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -23,7 +22,15 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.*;
 
 public class Pizton implements ClientModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("Pizton");
+	//todo: maybe better to use singletons? idk
 	private static final HashMap<String, PiztonModule> modules = new HashMap<>();
+
+	static {
+		Pizton.registerModule(new ThunderYeller());
+		Pizton.registerModule(new MouseToggleCompat());
+		Pizton.registerModule(new TradeCopier());
+		LOGGER.debug("done register");
+	}
 
 	@Override
 	public void onInitializeClient() {
@@ -31,13 +38,13 @@ public class Pizton implements ClientModInitializer {
 
 		ClientLifecycleEvents.CLIENT_STOPPING.register(client -> saveConfig());
 
-        Pizton.registerModule(new ThunderYeller());
-		Pizton.registerModule(new MouseToggleCompat());
-
+		LOGGER.debug("init modules");
 		Config config = Config.load();
-		for (String m : config.enabled_modules()) {
-			if (!modules.containsKey(m)) continue;
-			modules.get(m).enable();
+        for (var mod : modules.entrySet()) {
+			mod.getValue().init();
+			if (config.enabled_modules().contains(mod.getKey())) {
+				mod.getValue().enable();
+			}
 		}
 	}
 
@@ -55,7 +62,6 @@ public class Pizton implements ClientModInitializer {
 	public static void registerModule(PiztonModule module) {
 		LOGGER.info("Registered module: {}", module.getClass().getName());
 		modules.put(module.getClass().getSimpleName(), module);
-		module.register();
 	}
 
 	public static Logger loggerFor(Class<?> clazz) {

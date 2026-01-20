@@ -1,7 +1,7 @@
 package com.redstoned.pizton;
 
 public interface IPiztonModule {
-    void register();
+    void init();
     void enable();
     void disable();
 

@@ -2,7 +2,7 @@ package com.redstoned.pizton;
 
 public abstract class PiztonModule implements IPiztonModule {
     @Override
-    public void register() {}
+    public void init() {}
 
     protected boolean ENABLED = false;
 
