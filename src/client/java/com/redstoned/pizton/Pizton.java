@@ -2,13 +2,15 @@ package com.redstoned.pizton;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.redstoned.pizton.machinery.PiztonModule;
+import com.redstoned.pizton.machinery.ToggleableModule;
 import com.redstoned.pizton.module.MouseToggleCompat;
+import com.redstoned.pizton.module.TabCopy;
 import com.redstoned.pizton.module.ThunderYeller;
 import com.redstoned.pizton.module.TradeCopier;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
-import net.minecraft.ChatFormatting;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.network.chat.*;
 import org.slf4j.Logger;
@@ -29,21 +31,23 @@ public class Pizton implements ClientModInitializer {
 		Pizton.registerModule(new ThunderYeller());
 		Pizton.registerModule(new MouseToggleCompat());
 		Pizton.registerModule(new TradeCopier());
+		Pizton.registerModule(new TabCopy());
 		LOGGER.debug("done register");
 	}
 
 	@Override
 	public void onInitializeClient() {
 		registerCommand();
-
 		ClientLifecycleEvents.CLIENT_STOPPING.register(client -> saveConfig());
 
 		LOGGER.debug("init modules");
 		Config config = Config.load();
-        for (var mod : modules.entrySet()) {
-			mod.getValue().init();
-			if (config.enabled_modules().contains(mod.getKey())) {
-				mod.getValue().enable();
+        for (var mod_entry : modules.entrySet()) {
+			PiztonModule module = mod_entry.getValue();
+			module.init();
+
+			if (module instanceof ToggleableModule && config.enabled_modules().contains(mod_entry.getKey())) {
+				((ToggleableModule) module).enable();
 			}
 		}
 	}
@@ -53,7 +57,7 @@ public class Pizton implements ClientModInitializer {
 			modules
 				.entrySet()
 				.stream()
-				.filter(e -> e.getValue().enabled())
+				.filter(e -> e.getValue() instanceof ToggleableModule && ((ToggleableModule) e.getValue()).enabled())
 				.map(Map.Entry::getKey)
 				.collect(Collectors.toList())
 		).save();
@@ -76,7 +80,17 @@ public class Pizton implements ClientModInitializer {
 		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher.register(literal("pz")
 			.then(literal("enable")
 				.then(argument("module", StringArgumentType.word())
-					.suggests((ctx, b) -> SharedSuggestionProvider.suggest(modules.entrySet().stream().filter(e -> !e.getValue().enabled()).map(Map.Entry::getKey).collect(Collectors.toSet()), b))
+					.suggests((ctx, b) ->
+						SharedSuggestionProvider.suggest(
+							modules
+								.entrySet()
+								.stream()
+								.filter(e ->
+									e.getValue() instanceof ToggleableModule
+									&& !((ToggleableModule) e.getValue()).enabled()
+								)
+								.map(Map.Entry::getKey)
+								.collect(Collectors.toSet()), b))
 					.executes(context -> {
 						String module_name = StringArgumentType.getString(context, "module");
 						LOGGER.info("Enabling module: {}", module_name);
@@ -84,19 +98,35 @@ public class Pizton implements ClientModInitializer {
 						if (module == null) {
 							context.getSource().sendError(Component.literal("Not a known module"));
 							return 0;
-						} else if (module.ENABLED) {
+						} else if (!(module instanceof ToggleableModule)) {
+							context.getSource().sendError(Component.literal("This module cannot be enabled"));
+							return 0;
+						}
+						ToggleableModule tmod = (ToggleableModule) module;
+						if (tmod.enabled()) {
 							context.getSource().sendError(Component.literal("This module is already enabled"));
 							return 0;
 						}
 
-						module.enable();
+						tmod.enable();
+						context.getSource().sendFeedback(Component.literal("Enabled module: " + module_name));
 						return Command.SINGLE_SUCCESS;
 					})
 				)
 			)
 			.then(literal("disable")
 				.then(argument("module", StringArgumentType.word())
-					.suggests((ctx, b) -> SharedSuggestionProvider.suggest(modules.entrySet().stream().filter(e -> e.getValue().enabled()).map(Map.Entry::getKey).collect(Collectors.toSet()), b))
+					.suggests((ctx, b) ->
+						SharedSuggestionProvider.suggest(
+							modules
+							.entrySet()
+							.stream()
+							.filter(e ->
+								e.getValue() instanceof ToggleableModule
+								&& ((ToggleableModule) e.getValue()).enabled()
+							)
+							.map(Map.Entry::getKey)
+							.collect(Collectors.toSet()), b))
 					.executes(context -> {
 						String module_name = StringArgumentType.getString(context, "module");
 						LOGGER.info("Disabling module: {}", module_name);
@@ -104,12 +134,18 @@ public class Pizton implements ClientModInitializer {
 						if (module == null) {
 							context.getSource().sendError(Component.literal("Not a known module"));
 							return 0;
-						} else if (!module.enabled()) {
+						} else if (!(module instanceof ToggleableModule)) {
+							context.getSource().sendError(Component.literal("This module cannot be disabled"));
+							return 0;
+						}
+						ToggleableModule tmod = (ToggleableModule) module;
+						if (!tmod.enabled()) {
 							context.getSource().sendError(Component.literal("This module is already disabled"));
 							return 0;
 						}
 
-						module.disable();
+						tmod.disable();
+						context.getSource().sendFeedback(Component.literal("Disabled module: " + module_name));
 						return Command.SINGLE_SUCCESS;
 					})
 				)
@@ -123,8 +159,10 @@ public class Pizton implements ClientModInitializer {
 								.literal(String.format("%s ", module.getKey()))
 								.setStyle(
 									Style.EMPTY
-									.withHoverEvent(new HoverEvent.ShowText(Component.literal(module.getValue().description())))
-									.withColor(module.getValue().enabled() ? ChatFormatting.GREEN : ChatFormatting.RED)
+									.withHoverEvent(new HoverEvent.ShowText(Component.literal(
+										String.format("%s [%s]", module.getValue().description(), module.getValue().kind)
+									)))
+									.withColor(module.getValue().color())
 								)
 						);
 					}

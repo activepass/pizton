@@ -1,11 +1,11 @@
 package com.redstoned.pizton.module;
 
 import com.redstoned.pizton.Pizton;
-import com.redstoned.pizton.PiztonModule;
+import com.redstoned.pizton.machinery.ToggleableModule;
 import net.minecraft.world.item.ItemStack;
 import org.slf4j.Logger;
 
-public class TradeCopier extends PiztonModule {
+public class TradeCopier extends ToggleableModule {
     public static Logger LOGGER = Pizton.loggerFor(TradeCopier.class);
 
     @Override

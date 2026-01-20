@@ -1,7 +1,7 @@
 package com.redstoned.pizton.module;
 
 import com.redstoned.pizton.Pizton;
-import com.redstoned.pizton.PiztonModule;
+import com.redstoned.pizton.machinery.ToggleableModule;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundSource;
 import org.slf4j.Logger;
@@ -10,7 +10,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.sounds.SoundEvents;
 
-public class ThunderYeller extends PiztonModule {
+public class ThunderYeller extends ToggleableModule {
     public boolean foundThunder = false;
     private static final Logger LOGGER = Pizton.loggerFor(ThunderYeller.class);
 
