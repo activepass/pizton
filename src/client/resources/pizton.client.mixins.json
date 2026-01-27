@@ -4,7 +4,8 @@
 	"compatibilityLevel": "JAVA_21",
 	"client": [
 		"SwizzleToggleKeyTypeMixin",
-		"TraderCopyGuiMixin"
+		"TraderCopyGuiMixin",
+		"MapIdTooltipMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

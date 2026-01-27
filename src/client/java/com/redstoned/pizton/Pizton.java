@@ -4,10 +4,7 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.redstoned.pizton.machinery.PiztonModule;
 import com.redstoned.pizton.machinery.ToggleableModule;
-import com.redstoned.pizton.module.MouseToggleCompat;
-import com.redstoned.pizton.module.TabCopy;
-import com.redstoned.pizton.module.ThunderYeller;
-import com.redstoned.pizton.module.TradeCopier;
+import com.redstoned.pizton.module.*;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
@@ -32,6 +29,7 @@ public class Pizton implements ClientModInitializer {
 		Pizton.registerModule(new MouseToggleCompat());
 		Pizton.registerModule(new TradeCopier());
 		Pizton.registerModule(new TabCopy());
+		Pizton.registerModule(new AlwaysShowMapId());
 		LOGGER.debug("done register");
 	}
 
