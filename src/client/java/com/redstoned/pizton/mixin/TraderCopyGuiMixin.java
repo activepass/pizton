@@ -37,7 +37,7 @@ public abstract class TraderCopyGuiMixin extends AbstractContainerScreen<Merchan
     @Unique
     private boolean isTrader = false;
     @Unique
-    private final TradeCopier pizton$mod = (TradeCopier) Pizton.fetchModule(TradeCopier.class);
+    private static final TradeCopier pizton$module = Pizton.fetchModule(TradeCopier.class);
 
     @Inject(at = @At("TAIL"), method = "<init>")
     private void checkTrader(MerchantMenu merchantMenu, Inventory inventory, Component component, CallbackInfo ci) {
@@ -47,12 +47,12 @@ public abstract class TraderCopyGuiMixin extends AbstractContainerScreen<Merchan
 
     @Inject(at = @At("TAIL"), method = "init")
     private void init(CallbackInfo ci) {
-        if (pizton$mod.enabled() && isTrader) addButtons();
+        if (pizton$module.enabled() && isTrader) addButtons();
     }
 
     @Inject(at = @At("HEAD"), method = "renderContents")
     private void checkParse(GuiGraphics context, int mouseX, int mouseY, float deltaTicks, CallbackInfo ci) {
-        if (!pizton$mod.enabled() || !isTrader) return;
+        if (!pizton$module.enabled() || !isTrader) return;
         if (!isParsed && !this.menu.getOffers().isEmpty() && this.sets.isEmpty()) {
             determineSets();
             addButtons();

@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(ToggleKeyMapping.class)
 public class SwizzleToggleKeyTypeMixin {
 	@Unique
-	private final MouseToggleCompat pizton$mod = (MouseToggleCompat) Pizton.fetchModule(MouseToggleCompat.class);
+	private static final MouseToggleCompat pizton$module = Pizton.fetchModule(MouseToggleCompat.class);
 
 	@WrapOperation(
 		method = "shouldRestoreStateOnScreenClosed",
@@ -25,6 +25,6 @@ public class SwizzleToggleKeyTypeMixin {
 	private InputConstants.Type init(InputConstants.Key instance, Operation<InputConstants.Type> original) {
 		// Allow any key type to pass type check
 		// Probably has some wack edge case (?)
-		return pizton$mod.enabled() ? InputConstants.Type.KEYSYM : original.call(instance);
+		return pizton$module.enabled() ? InputConstants.Type.KEYSYM : original.call(instance);
 	}
 }

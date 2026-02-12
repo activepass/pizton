@@ -5,7 +5,8 @@
 	"client": [
 		"SwizzleToggleKeyTypeMixin",
 		"TraderCopyGuiMixin",
-		"MapIdTooltipMixin"
+		"MapIdTooltipMixin",
+		"PreventSpecMenuFade"
 	],
 	"injectors": {
 		"defaultRequire": 1

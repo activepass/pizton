@@ -25,11 +25,11 @@ import java.util.function.Consumer;
 @Mixin(MapId.class)
 public class MapIdTooltipMixin {
     @Unique
-    private final AlwaysShowMapId pizton$mod = (AlwaysShowMapId) Pizton.fetchModule(AlwaysShowMapId.class);
+    private static final AlwaysShowMapId pizton$module = Pizton.fetchModule(AlwaysShowMapId.class);
 
     @Inject(method = "addToTooltip", at=@At(value = "INVOKE", ordinal=0, target = "Lnet/minecraft/core/component/DataComponentGetter;get(Lnet/minecraft/core/component/DataComponentType;)Ljava/lang/Object;"))
     public void inject_new_mapid_call(Item.TooltipContext tooltipContext, Consumer<Component> consumer, TooltipFlag tooltipFlag, DataComponentGetter dataComponentGetter, CallbackInfo ci) {
-        if (pizton$mod.enabled()) {
+        if (pizton$module.enabled()) {
             consumer.accept(Component.translatable("filled_map.id", ((MapId)(Object)this).id()).withStyle(ChatFormatting.GRAY));
         }
     }
@@ -39,6 +39,6 @@ public class MapIdTooltipMixin {
     @SuppressWarnings("unchecked")
     @ModifyExpressionValue(method = "addToTooltip", at = @At(value = "INVOKE", ordinal=1, target = "Lnet/minecraft/core/component/DataComponentGetter;get(Lnet/minecraft/core/component/DataComponentType;)Ljava/lang/Object;"))
     public <T> T prevent_old_mapid_call(@Nullable T original) {
-        return pizton$mod.enabled() ? (T) Component.empty() : original;
+        return pizton$module.enabled() ? (T) Component.empty() : original;
     }
 }

@@ -30,6 +30,7 @@ public class Pizton implements ClientModInitializer {
 		Pizton.registerModule(new TradeCopier());
 		Pizton.registerModule(new TabCopy());
 		Pizton.registerModule(new AlwaysShowMapId());
+		Pizton.registerModule(new PersistSpecMenu());
 		LOGGER.debug("done register");
 	}
 
@@ -62,7 +63,7 @@ public class Pizton implements ClientModInitializer {
 	}
 
 	public static void registerModule(PiztonModule module) {
-		LOGGER.info("Registered module: {}", module.getClass().getName());
+		LOGGER.debug("Registered module: {}", module.getClass().getName());
 		modules.put(module.getClass().getSimpleName(), module);
 	}
 
@@ -70,8 +71,12 @@ public class Pizton implements ClientModInitializer {
 		return LoggerFactory.getLogger(String.format("Pizton/%s", clazz.getSimpleName()));
 	}
 
-	public static PiztonModule fetchModule(Class<?> clazz) {
-		return modules.get(clazz.getSimpleName());
+	@SuppressWarnings("unchecked")
+    public static <M extends PiztonModule> M fetchModule(Class<M> clazz) {
+		var m = modules.get(clazz.getSimpleName());
+		if (m == null) throw new IllegalArgumentException(String.format("'%s' is not a valid pizton module", clazz.getSimpleName()));
+		// this should always be a valid cast
+		return (M) m;
 	}
 
 	public void registerCommand() {
