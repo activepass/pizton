@@ -60,12 +60,26 @@ public abstract class TraderCopyGuiMixin extends AbstractContainerScreen<Merchan
         }
     }
 
+
+
     @Unique
     private void addButtons() {
-        int i = 0;
+        this.addRenderableWidget(
+            new Button.Builder(
+                Component.literal("Copy Position"),
+                b -> Minecraft.getInstance().keyboardHandler.setClipboard(Minecraft.getInstance().player.blockPosition().toShortString())
+            )
+            .pos(0, 0)
+            .build()
+        );
+        int height_offset = 1;
         for (String set : this.sets) {
-            this.addRenderableWidget(new Button.Builder(Component.literal(String.format("Copy %s set", set)), b -> copySet(set)).pos(0, i * 20).build());
-            i++;
+            this.addRenderableWidget(
+                new Button.Builder(Component.literal(String.format("Copy %s set", set)), b -> copySet(set))
+                .pos(0, height_offset * Button.DEFAULT_HEIGHT)
+                .build()
+            );
+            height_offset++;
         }
     }
 
