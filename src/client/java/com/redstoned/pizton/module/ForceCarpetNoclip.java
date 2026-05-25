@@ -9,7 +9,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.network.chat.Component;
 import org.slf4j.Logger;
 
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.*;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.*;
 
 public class ForceCarpetNoclip extends StaticModule {
     public static Logger LOGGER = Pizton.loggerFor(TradeCopier.class);

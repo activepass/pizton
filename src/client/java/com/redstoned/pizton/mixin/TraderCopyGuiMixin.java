@@ -3,7 +3,7 @@ package com.redstoned.pizton.mixin;
 import com.redstoned.pizton.Pizton;
 import com.redstoned.pizton.module.TradeCopier;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.MerchantScreen;
@@ -50,8 +50,8 @@ public abstract class TraderCopyGuiMixin extends AbstractContainerScreen<Merchan
         if (pizton$module.enabled() && isTrader) addButtons();
     }
 
-    @Inject(at = @At("HEAD"), method = "renderContents")
-    private void checkParse(GuiGraphics context, int mouseX, int mouseY, float deltaTicks, CallbackInfo ci) {
+    @Inject(at = @At("HEAD"), method = "extractContents")
+    private void checkParse(GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks, CallbackInfo ci) {
         if (!pizton$module.enabled() || !isTrader) return;
         if (!isParsed && !this.menu.getOffers().isEmpty() && this.sets.isEmpty()) {
             determineSets();
