@@ -8,11 +8,14 @@ import com.redstoned.pizton.module.*;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.network.chat.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -31,6 +34,7 @@ public class Pizton implements ClientModInitializer {
 		Pizton.registerModule(new TabCopy());
 		Pizton.registerModule(new AlwaysShowMapId());
 		Pizton.registerModule(new PersistSpecMenu());
+		Pizton.registerModule(new ForceCarpetNoclip());
 		LOGGER.debug("done register");
 	}
 
@@ -156,7 +160,7 @@ public class Pizton implements ClientModInitializer {
 			.then(literal("list")
 				.executes(ctx -> {
 					MutableComponent base = Component.literal("Modules: ");
-					for (var module : modules.entrySet()) {
+					for (var module : modules.entrySet().stream().sorted(Map.Entry.comparingByKey()).toList()) {
 						base.append(
 							Component
 								.literal(String.format("%s ", module.getKey()))
