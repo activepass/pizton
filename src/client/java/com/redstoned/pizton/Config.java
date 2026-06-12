@@ -21,10 +21,13 @@ public record Config(List<String> enabled_modules) {
             JsonElement je = JsonParser.parseReader(new FileReader(config_file));
             DataResult<Config> result = Config.CODEC.parse(JsonOps.INSTANCE, je);
             return result.resultOrPartial(Pizton.LOGGER::error).orElseThrow();
+        } catch (FileNotFoundException e) {
+            Pizton.LOGGER.info("No existing config found");
         } catch (Exception e) {
+            Pizton.LOGGER.error("Failed to load config");
             e.printStackTrace();
-            return new Config(new ArrayList<>());
         }
+        return new Config(new ArrayList<>());
     }
 
     public void save() {

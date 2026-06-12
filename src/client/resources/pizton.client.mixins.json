@@ -6,7 +6,8 @@
 		"SwizzleToggleKeyTypeMixin",
 		"TraderCopyGuiMixin",
 		"MapIdTooltipMixin",
-		"PreventSpecMenuFade"
+		"PreventSpecMenuFade",
+		"PlayerReducedDebugMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

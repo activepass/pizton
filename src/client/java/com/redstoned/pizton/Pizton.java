@@ -35,6 +35,7 @@ public class Pizton implements ClientModInitializer {
 		Pizton.registerModule(new AlwaysShowMapId());
 		Pizton.registerModule(new PersistSpecMenu());
 		Pizton.registerModule(new ForceCarpetNoclip());
+		Pizton.registerModule(new NeverReduceDebugInfo());
 		LOGGER.debug("done register");
 	}
 
