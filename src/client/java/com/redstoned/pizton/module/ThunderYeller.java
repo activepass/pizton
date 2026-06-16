@@ -30,7 +30,7 @@ public class ThunderYeller extends ToggleableModule {
                     LOGGER.debug("Thunder detected!");
                     client.player.sendSystemMessage(Component.literal("IT'S THUNDERING"));
                     client.level.playSound(client.player, client.player.getX(), client.player.getY(), client.player.getZ(), SoundEvents.ENDER_DRAGON_DEATH, SoundSource.MASTER, 1, 1);
-                    client.gui.setTitle(Component.literal("THUNDER!!!!"));
+                    client.gui.hud.setTitle(Component.literal("THUNDER!!!!"));
                     foundThunder = true;
                 }
                 if (!client.level.isThundering() && foundThunder) {
