@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 public abstract class TraderCopyGuiMixin extends AbstractContainerScreen<MerchantMenu> {
     public TraderCopyGuiMixin(MerchantMenu handler, Inventory inventory, Component title) {
         super(handler, inventory, title);
-        //TODO Auto-generated constructor stub
     }
 
     @Unique
